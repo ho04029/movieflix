@@ -8,6 +8,8 @@ class ApiService {
   static const String baseUrl = "https://movies-api.nomadcoders.workers.dev";
   static const String popular = "popular";
   static const String movieId = "movie?id";
+  static const String nowPlaying = "now-playing";
+  static const String comingSoon = "coming-soon";
 
   static Future<List<MovieModel>> getPopularMovies() async {
     List<MovieModel> movieInstances = [];
@@ -33,6 +35,30 @@ class ApiService {
     if (response.statusCode == 200) {
       final movie = jsonDecode(response.body);
       return MovieDetailModel.fromJson(movie);
+    }
+    throw Error();
+  }
+
+  static Future<List<MovieModel>> getNowPlayingMovies() async {
+    final url = Uri.parse('$baseUrl/$nowPlaying');
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final json = jsonDecode(response.body);
+      final List<dynamic> movies = json['results'];
+      return movies.map((movie) => MovieModel.fromJson(movie)).toList();
+    }
+    throw Error();
+  }
+
+  static Future<List<MovieModel>> getComingSoonMovies() async {
+    final url = Uri.parse('$baseUrl/$comingSoon');
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final json = jsonDecode(response.body);
+      final List<dynamic> movies = json['results'];
+      return movies.map((movie) => MovieModel.fromJson(movie)).toList();
     }
     throw Error();
   }
